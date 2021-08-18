@@ -19,23 +19,13 @@
     <PackageReference Include="MySql.Data" Version="8.0.26" />
     <PackageReference Include="MySqlConnector" Version="1.3.11" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
+    <PackageReference Include="WatsonORM.Mysql" Version="1.3.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NeighborhoodMarket.DataAccess\NeighborhoodMarket.DataAccess.csproj" />
     <ProjectReference Include="..\NeighborhoodMarket.Models\NeighborhoodMarket.Models.csproj" />
     <ProjectReference Include="..\NeighborhoodMarket.Utilities\NeighborhoodMarket.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\AdminArea\Controllers\" />
-    <Folder Include="Areas\AdminArea\Data\" />
-    <Folder Include="Areas\AdminArea\Models\" />
-    <Folder Include="Areas\AdminArea\Views\" />
-    <Folder Include="Areas\CustomerArea\Controllers\" />
-    <Folder Include="Areas\CustomerArea\Data\" />
-    <Folder Include="Areas\CustomerArea\Models\" />
-    <Folder Include="Areas\CustomerArea\Views\" />
   </ItemGroup>
 
 </Project>

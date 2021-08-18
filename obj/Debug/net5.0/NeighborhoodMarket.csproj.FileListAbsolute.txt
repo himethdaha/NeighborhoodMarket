@@ -417,8 +417,6 @@ C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\NeighborhoodMarket
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\NeighborhoodMarket.TagHelpers.output.cache
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\NeighborhoodMarket.RazorCoreGenerate.cache
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Identity\Pages\_ViewStart.cshtml.g.cs
-C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Home\Index.cshtml.g.cs
-C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Home\Privacy.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\Error.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_Layout.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
@@ -450,3 +448,18 @@ C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Pomelo.EntityFrame
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\NeighborhoodMarket.DataAccess.pdb
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\NeighborhoodMarket.Models.pdb
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\NeighborhoodMarket.Utilities.pdb
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\Home\Index.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\Home\Privacy.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\_ViewImports.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\_ViewStart.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Dapper.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\DatabaseWrapper.Core.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\DatabaseWrapper.Mysql.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\WatsonORM.Core.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\WatsonORM.Mysql.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Category\Index.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\_ViewImports.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\_ViewStart.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Category\Upsert.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_CreateAndBackToListButton.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_EditAndBackToListButton.cshtml.g.cs

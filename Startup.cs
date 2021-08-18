@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NeighborhoodMarket.Data;
+using NeighborhoodMarket.DataAccess.Data;
+using NeighborhoodMarket.DataAccess.Data.Repository;
+using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,7 @@ namespace NeighborhoodMarket
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews();
         }
 
@@ -62,7 +65,7 @@ namespace NeighborhoodMarket
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{area:CustomerArea}/{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
