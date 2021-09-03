@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
+using NeighborhoodMarket.Models;
 using NeighborhoodMarket.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,15 +15,18 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<Product> ProductList = _unitOfWork.Product.GetAll(includeProperties: "Category"); 
+            return View(ProductList);
         }
 
         public IActionResult Privacy()

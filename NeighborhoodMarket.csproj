@@ -28,4 +28,8 @@
     <ProjectReference Include="..\NeighborhoodMarket.Utilities\NeighborhoodMarket.Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\" />
+  </ItemGroup>
+
 </Project>

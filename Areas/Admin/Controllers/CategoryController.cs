@@ -12,16 +12,19 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
+       
 
         public CategoryController(IUnitOfWork _unitOfWork)
         {
             unitOfWork = _unitOfWork;
+
         }
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Upsert(int?id)
         {
             Category category = new Category();

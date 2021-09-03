@@ -6,40 +6,48 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var title = "Create Category";
 }
+<style>
+    div.coloring {
+        border-style: solid;
+        border-color: dimgrey;
+    }
+</style>
 
 <form method="post">
-    <div class="container-fluid">
+    <div class="container-fluid border-2 pt-1">
+        <div asp-validation-summary="ModelOnly"></div>
         <div class="row pt-4">
             <div class="col">
                 @{ if (Model.Id != 0)
                     {
-                       <h1 class="text-primary">Edit Category</h1>
+                        <h1 class="text-primary">@title = Edit Category</h1>
                     }
                 }
 
             </div>
         </div>
+        <hr />
         <div class="form-group row">
             <div class="col-4">
                 <label asp-for="CategoryName" class="text-black"></label>
             </div>
             <div class="col-6">
-                <input asp-for="CategoryName" class="form-control"/>
-                 <span asp-validation-for="CategoryName" class="text-danger"></span>
+                <input asp-for="CategoryName" class="form-control coloring" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
             <div class="col-8 offset-4">
-            @{ 
-               if(Model.Id == 0)
-               {
-                 <partial name="_CreateAndBackToListButton"/>
-               }
-               else
-               {
-                  <partial name="_EditAndBackToListButton" model="Model.Id"/>
-               }
-            }
+                @{
+                    if (Model.Id == 0)
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                    else
+                    {
+                        <partial name="_EditAndBackToListButton" model="Model.Id" />
+                    }
+                }
             </div>
         </div>
     </div>

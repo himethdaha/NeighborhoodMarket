@@ -1,0 +1,132 @@
+﻿@model NeighborhoodMarket.Models.ViewModels.ProductVm
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Create Product";
+}
+<style>
+    div.coloring{
+        border-style: solid;
+        border-color: dimgrey;
+    }
+</style>
+<form method="post" enctype="multipart/form-data">
+    <div class="container-fluid">
+        <div asp-validation-summary="ModelOnly"></div>
+        @{ if (Model.Product.Id != 0)
+           {
+                title = "Edit Category";
+                <input type="hidden" asp-for="Product.Id"/>
+           }
+        }
+
+        <div class="row pt-2">
+            <div class="col">
+                <h2 class="text-primary">@title</h2>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group row pt-2">
+            <div class="col-4">
+                <label asp-for="Product.ProductName" class="text-black"></label>
+            </div>
+            <div id="form-pname" class="col-6 coloring">
+                <input asp-for="Product.ProductName" class="form-control" style="border-color:black" />
+                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+            </div>
+        </div>
+        <br />
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Product.Description" class="text-black"></label>
+            </div>
+            <div class="col-6 coloring p-0">
+                <textarea asp-for="Product.Description" class="form-control"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+        </div>
+        <br />
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Product.Price" class="text-black"></label>
+            </div>
+            <div class="col-6 coloring">
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+        </div>
+        <br />
+        <div class="form-group row">
+            <div class="col-4">
+                Categories
+            </div>
+            <div class="col-8 coloring">
+                @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategoryList, "-Select a Category-",
+                new { @class = "form-control" })
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+        </div>
+        @if(Model.Product.Id!=0)
+            {
+                <div class="col-3">
+                    <img src="@Model.Product.ImageUrl" style="border:1px solid; border-radius:5px;"/>
+                </div>
+            }
+        <br />
+        <div class="col">
+            <input type="file" name="files" id="ImageBox" multiple class="form-control" />
+        </div>
+
+        <div class="form-group row pt-1">
+            <div class="col-8 offset-4">
+                @{
+                    if (Model.Product.Id == 0)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" onclick="return validateImage()" class="btn btn-primary form-control">Create</button>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-danger form-control" asp-action="Index">Back</a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <partial name="_EditAndBackToListButton" model="Model.Product.Id" />
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial">
+        <script src="https://cdn.tiny.cloud/1/ooxj8k2oq192pdlogh11ertstwziqcegzp8gihwy7rdkgefw/tinymce/5/tinymce.min.js" 
+                referrerpolicy="origin">
+
+        </script>
+
+        <script>
+            tinymce.init({
+                selector: 'textarea',  // change this value according to your HTML
+                plugins: 'lists',
+                menubar: 'file edit format'
+            });
+
+            function validateImage() {
+                if (document.getElementById("ImageBox").value == "") {
+                    swal("Error", "Please select an Image!");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+
+        </script>
+}

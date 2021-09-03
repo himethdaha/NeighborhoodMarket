@@ -463,3 +463,7 @@ C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Category\Upsert.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_CreateAndBackToListButton.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Views\Shared\_EditAndBackToListButton.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Product\Index.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Product\Upsert.cshtml.g.cs
