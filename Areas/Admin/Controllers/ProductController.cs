@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +7,7 @@ using NeighborhoodMarket.DataAccess.Data.Repository;
 using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
 using NeighborhoodMarket.Models;
 using NeighborhoodMarket.Models.ViewModels;
+using NeighborhoodMarket.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +17,7 @@ using System.Threading.Tasks;
 namespace NeighborhoodMarket.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = StaticDetails.Role_User_Admin)]
     public class ProductController : Controller
     {
         public readonly IUnitOfWork _unitOfWork;
@@ -67,62 +70,52 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Root path
                 string webRootPath = _webHostEnvironment.WebRootPath;
-                //Retrieve the uploaded files
                 var files = HttpContext.Request.Form.Files;
-
-                if(files.Count>0)
+                if (files.Count > 0)
                 {
-                    //Giving the image an identifier
                     string fileName = Guid.NewGuid().ToString();
-                    var uploadPath = Path.Combine(webRootPath, @"images\products");
-                    var extension = Path.GetExtension(files[0].FileName);
+                    var uploads = Path.Combine(webRootPath, @"images\products");
+                    var extenstion = Path.GetExtension(files[0].FileName);
 
-                    //For edit
-                    if(productVm.Product.ImageUrl != null)
+                    if (productVm.Product.ImageUrl != null)
                     {
-                        //Remove previous image
+                        //this is an edit and we need to remove old image
                         var imagePath = Path.Combine(webRootPath, productVm.Product.ImageUrl.TrimStart('\\'));
-                        if(System.IO.File.Exists(imagePath))
+                        if (System.IO.File.Exists(imagePath))
                         {
                             System.IO.File.Delete(imagePath);
                         }
-                        //Adding the new file
-                        using(var filesStreams = new FileStream(Path.Combine(uploadPath,fileName+extension),FileMode.Create))
-                        {
-                            //Copy the file to filestreams
-                            //Copies into our images folder
-                            files[0].CopyTo(filesStreams);
-                        }
-                        productVm.Product.ImageUrl = @"\images\products\" + fileName + extension;
                     }
-                    //when they don't change the image
-                    else
+                    using (var filesStreams = new FileStream(Path.Combine(uploads, fileName + extenstion), FileMode.Create))
                     {
-                        if(productVm.Product.Id!=0)
-                        {
-                            Product objFromDb = _unitOfWork.Product.Get(productVm.Product.Id);
-                            productVm.Product.ImageUrl = objFromDb.ImageUrl;
-                        }
-                    
+                        files[0].CopyTo(filesStreams);
+                    }
+                    productVm.Product.ImageUrl = @"\images\products\" + fileName + extenstion;
+                }
+                else
+                {
+                    //update when they do not change the image
+                    if (productVm.Product.Id != 0)
+                    {
+                        Product objFromDb = _unitOfWork.Product.Get(productVm.Product.Id);
+                        productVm.Product.ImageUrl = objFromDb.ImageUrl;
                     }
                 }
-                //For Create
-           
-                    if(productVm.Product.Id ==0)
-                    {
-                        _unitOfWork.Product.Add(productVm.Product);
-                        _unitOfWork.Save();
-                    }
-                    else
-                    {
-                        _unitOfWork.Product.Update(productVm.Product);
-                        _unitOfWork.Save();
-                    }
-                
-                     return RedirectToAction(nameof(Index));
-             }
+
+
+                if (productVm.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productVm.Product);
+
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(productVm.Product);
+                }
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(Index));
+            }
             else
             {
                 productVm.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
@@ -130,15 +123,12 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
                 });
-
-                //populate product if for update
-                if(productVm.Product.Id!=0)
+                if (productVm.Product.Id != 0)
                 {
                     productVm.Product = _unitOfWork.Product.Get(productVm.Product.Id);
                 }
             }
             return View(productVm);
-            
         }
 
         #region APICalls

@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using NeighborhoodMarket.Utilities
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
-  
+
 </head>
 <body>
     <header>
@@ -29,19 +33,56 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dropdown link
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
-                                <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
-                                <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="ApplicationUser" asp-action="Index">Users</a>
-                            </div>
-                        </li>
+                        @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Management
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    @if (User.IsInRole(StaticDetails.Role_User_Admin))
+                                    {
+                                        <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
+                                        <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
+                                    }
+                                    @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
+                                    {
+                                        <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="ApplicationUser" asp-action="Index">Users</a>
+
+                                    }
+
+
+                                </div>
+
+                            </li>
+
+
+
+                        }
+                        <!--Shopping Cart-->
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.ssShoppingCart) != null)
+                        {
+                            <li>
+                                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="nav-link text-white" style="color:white">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.ssShoppingCart);
+                                    }
+                                    <i class="fas fa-cart-plus"></i> &nbsp; (@count);
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                                <li>
+                                    <a href="" title="Buy Something :)" class="nav-link text-white" style="color:white">
+                                        <i class="fas fa-cart-plus"></i> (0);
+                                    </a>
+                                </li>
+                        }
                     </ul>
-                    <partial name="_LoginPartial" />
+
                 </div>
+                        <partial name="_LoginPartial" />
             </div>
         </nav>
     </header>

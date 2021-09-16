@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using NeighborhoodMarket.Models;
+using NeighborhoodMarket.Utilities;
 
 namespace NeighborhoodMarket.Areas.Identity.Pages.Account
 {
@@ -51,6 +53,22 @@ namespace NeighborhoodMarket.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            [Required]
+            public string Name { get; set; }
+            [Required]
+            public string StreetAddress1 { get; set; }
+            public string StreetAddress2 { get; set; }
+            [Required]
+            public string State { get; set; }
+            [Required]
+            public string City { get; set; }
+            public string PostalCode { get; set; }
+            [Required]
+            [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Phone Number")]
+            [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$")]
+            public string Phone { get; set; }
         }
 
         public IActionResult OnGetAsync()
@@ -101,7 +119,8 @@ namespace NeighborhoodMarket.Areas.Identity.Pages.Account
                 {
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        Name = info.Principal.FindFirstValue(ClaimTypes.Name)
                     };
                 }
                 return Page();
@@ -121,14 +140,29 @@ namespace NeighborhoodMarket.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    Name = Input.Name,
+                    StreetAddress1 = Input.StreetAddress1,
+                    StreetAddress2 = Input.StreetAddress2,
+                    City = Input.City,
+                    State = Input.State,
+                    PostalCode = Input.PostalCode,
+                    PhoneNumber = Input.Phone,
+
+                };
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
+                    //If acc creation is successful
                     if (result.Succeeded)
                     {
+                        //Assign a role
+                        await _userManager.AddToRoleAsync(user, StaticDetails.Role_User_Indi);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
                         var userId = await _userManager.GetUserIdAsync(user);

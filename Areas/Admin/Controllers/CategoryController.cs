@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
 using NeighborhoodMarket.Models;
+using NeighborhoodMarket.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace NeighborhoodMarket.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =StaticDetails.Role_User_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
