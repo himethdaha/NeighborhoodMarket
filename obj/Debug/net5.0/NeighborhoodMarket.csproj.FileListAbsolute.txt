@@ -510,3 +510,5 @@ C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Identi
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.Facebook.dll
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.Google.dll
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\Home\Details.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\SendGrid.dll
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\bin\Debug\net5.0\StarkbankEcdsa.dll
