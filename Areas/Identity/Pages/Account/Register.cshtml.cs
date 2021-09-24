@@ -201,7 +201,16 @@ namespace NeighborhoodMarket.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
+            //Populating RoleList
+            Input = new InputModel()
+            {
+                //Where clause-> Admin can't register new individual users
+                RoleList = _roleManager.Roles.Where(u => u.Name != StaticDetails.Role_User_Indi).Select(x => x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i
+                })
+            };
             // If we got this far, something failed, redisplay form
             return Page();
         }

@@ -21,12 +21,12 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         public readonly IUnitOfWork _unitOfWork;
-        public readonly IWebHostEnvironment _webHostEnvironment;
+        public readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webHostEnvironment;
+            _hostEnvironment = hostEnvironment;
 
         }
         public IActionResult Index()
@@ -66,11 +66,11 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVm productVm)
+        public IActionResult Upsert(ProductVm productVM)
         {
             if (ModelState.IsValid)
             {
-                string webRootPath = _webHostEnvironment.WebRootPath;
+                string webRootPath = _hostEnvironment.WebRootPath;
                 var files = HttpContext.Request.Form.Files;
                 if (files.Count > 0)
                 {
@@ -78,10 +78,10 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
                     var uploads = Path.Combine(webRootPath, @"images\products");
                     var extenstion = Path.GetExtension(files[0].FileName);
 
-                    if (productVm.Product.ImageUrl != null)
+                    if (productVM.Product.ImageUrl != null)
                     {
                         //this is an edit and we need to remove old image
-                        var imagePath = Path.Combine(webRootPath, productVm.Product.ImageUrl.TrimStart('\\'));
+                        var imagePath = Path.Combine(webRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
                         if (System.IO.File.Exists(imagePath))
                         {
                             System.IO.File.Delete(imagePath);
@@ -91,44 +91,45 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
                     {
                         files[0].CopyTo(filesStreams);
                     }
-                    productVm.Product.ImageUrl = @"\images\products\" + fileName + extenstion;
+                    productVM.Product.ImageUrl = @"\images\products\" + fileName + extenstion;
                 }
                 else
                 {
                     //update when they do not change the image
-                    if (productVm.Product.Id != 0)
+                    if (productVM.Product.Id != 0)
                     {
-                        Product objFromDb = _unitOfWork.Product.Get(productVm.Product.Id);
-                        productVm.Product.ImageUrl = objFromDb.ImageUrl;
+                        Product objFromDb = _unitOfWork.Product.Get(productVM.Product.Id);
+                        productVM.Product.ImageUrl = objFromDb.ImageUrl;
                     }
                 }
 
 
-                if (productVm.Product.Id == 0)
+                if (productVM.Product.Id == 0)
                 {
-                    _unitOfWork.Product.Add(productVm.Product);
+                    _unitOfWork.Product.Add(productVM.Product);
 
                 }
                 else
                 {
-                    _unitOfWork.Product.Update(productVm.Product);
+                    _unitOfWork.Product.Update(productVM.Product);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                productVm.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
                 {
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
                 });
-                if (productVm.Product.Id != 0)
+               
+                if (productVM.Product.Id != 0)
                 {
-                    productVm.Product = _unitOfWork.Product.Get(productVm.Product.Id);
+                    productVM.Product = _unitOfWork.Product.Get(productVM.Product.Id);
                 }
             }
-            return View(productVm);
+            return View(productVM);
         }
 
         #region APICalls
@@ -146,7 +147,7 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
 
             if (objFromDb != null)
             {
-                string webRootPath = _webHostEnvironment.WebRootPath;
+                string webRootPath = _hostEnvironment.WebRootPath;
                 var imagePath = Path.Combine(webRootPath, objFromDb.ImageUrl.TrimStart('\\'));
                 if (System.IO.File.Exists(imagePath))
                 {

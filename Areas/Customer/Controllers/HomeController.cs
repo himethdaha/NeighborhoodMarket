@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 using NeighborhoodMarket.Areas.Admin.Controllers;
 using NeighborhoodMarket.DataAccess.Data;
 using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
@@ -22,26 +23,24 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ApplicationDbContext _db;
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, ApplicationDbContext db)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _db = db;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Product> ProductList = _unitOfWork.Product.GetAll(includeProperties:"Category");
+            IEnumerable<Product> ProductList = _unitOfWork.Product.GetAll(includeProperties: "Category");
             //Retrieving the shoppingCart when the user logs in
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            if(claim!=null)
+            if (claim != null)
             {
-                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count();
+                var Count = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value).ToList().Count();
                 //Set session
-                HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, count);
+                HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, Count);
 
             }
             return View(ProductList);
@@ -49,7 +48,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
         public IActionResult Details(int id)
         {
             var ProductFromDb = _unitOfWork.Product
-                .GetFirstOrDefault(u => u.Id == id, includeProperties:"Category");
+                .GetFirstOrDefault(u => u.Id == id, includeProperties: "Category");
             ShoppingCart shoppingCart = new ShoppingCart()
             {
                 Product = ProductFromDb,
@@ -64,11 +63,12 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
         public IActionResult Details(ShoppingCart ShoppingCart)
         {
             ShoppingCart.Id = 0;
-            if(ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 //Add to cart
                 //Find the Id of the logged in user
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claimsIdentity = (ClaimsIdentity)this.User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 //Stores the actual user Id
                 ShoppingCart.ApplicationUserId = claim.Value;
@@ -78,20 +78,23 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
                     u => u.ApplicationUserId == ShoppingCart.ApplicationUserId && u.ProductId == ShoppingCart.ProductId
                     , includeProperties: "Product");
 
-                if(shoppingCartFromDb == null)
+                if (shoppingCartFromDb == null)
                 {
                     //No records in database for the product/s of that user
                     _unitOfWork.ShoppingCart.Add(ShoppingCart);
+                    _unitOfWork.Save();
                 }
                 else
                 {
-                    shoppingCartFromDb.count += ShoppingCart.count;
-                    //_unitOfWork.ShoppingCart.Update(shoppingCartFromDb);
+                    shoppingCartFromDb.Count += ShoppingCart.Count;
+                    _unitOfWork.ShoppingCart.Update(shoppingCartFromDb);
+
                 }
-                _unitOfWork.Save();
-                var count = _unitOfWork.ShoppingCart
-                    .GetAll(u => u.ApplicationUserId == claim.Value).Select(t=>t.count).Sum();
-                HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, count);
+
+                //Session Implementation
+                var Count = _unitOfWork.ShoppingCart
+                    .GetAll(c => c.ApplicationUserId == claim.Value).Select(t => t.Count).Sum();
+                HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, Count);
 
 
                 return RedirectToAction(nameof(Index));
