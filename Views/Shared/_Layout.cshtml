@@ -44,6 +44,7 @@
                                     {
                                         <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
                                         <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
+                                        <a class="dropdown-item nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
                                     }
                                     @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
                                     {

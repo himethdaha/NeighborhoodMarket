@@ -155,7 +155,7 @@ namespace NeighborhoodMarket.Areas.Identity.Pages.Account
                     }
 
                     //Grant admin permission to every user created
-                    //await _userManager.AddToRoleAsync(user, StaticDetails.Role_User_Admin);
+                    await _userManager.AddToRoleAsync(user, StaticDetails.Role_User_Admin);
 
                     if(user.Role == null)
                     {

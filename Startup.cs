@@ -12,6 +12,7 @@ using NeighborhoodMarket.DataAccess.Data;
 using NeighborhoodMarket.DataAccess.Data.Repository;
 using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
 using NeighborhoodMarket.Utilities;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,7 @@ namespace NeighborhoodMarket
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IEmailSender, EmailSender>();
             services.Configure<EmailOptions>(Configuration);
+            services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.ConfigureApplicationCookie(options =>
@@ -85,6 +87,7 @@ namespace NeighborhoodMarket
             app.UseStaticFiles();
 
             app.UseRouting();
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["Secretkey"];
             app.UseSession();
 
             app.UseAuthentication();

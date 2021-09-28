@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using NeighborhoodMarket.DataAccess.Data.Repository.IRepository;
+using NeighborhoodMarket.Models;
 using NeighborhoodMarket.Models.ViewModels;
 using NeighborhoodMarket.Utilities;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
         private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
 
+        [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
 
         public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender, UserManager<IdentityUser> userManager)
@@ -54,7 +57,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             //Loop through all the items in the shopping cart
             foreach (var list in ShoppingCartVM.CartList)
             {
-                list.Price = StaticDetails.GetPrice(list.Price);
+                list.Price = StaticDetails.GetPrice(list.Count,list.Price);
                 //Calculate price
                 ShoppingCartVM.OrderOverview.OrderTotal += (list.Price * list.Count);
                 //Show the description
@@ -106,7 +109,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             //Get the shoppingcart from the database
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(c => c.Id == cartId, includeProperties: "Product");
             cart.Count += 1;
-            cart.Price = StaticDetails.GetPrice(cart.Product.Price);
+            cart.Price = StaticDetails.GetPrice(cart.Count,cart.Product.Price);
             _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
@@ -128,7 +131,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             else
             {
                 cart.Count -= 1;
-                cart.Price = StaticDetails.GetPrice(cart.Product.Price);
+                cart.Price = StaticDetails.GetPrice(cart.Count,cart.Product.Price);
                 _unitOfWork.Save();
             }
 
@@ -146,10 +149,6 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             _unitOfWork.ShoppingCart.Remove(cart);
             _unitOfWork.Save();
             HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, count - 1);
-
-            cart.Count -= 1;
-            cart.Price = StaticDetails.GetPrice(cart.Product.Price);
-            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
         }
@@ -172,7 +171,7 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             //Loop through all the items in the shopping cart
             foreach (var list in ShoppingCartVM.CartList)
             {
-                list.Price = StaticDetails.GetPrice(list.Price);
+                list.Price = StaticDetails.GetPrice(list.Count,list.Price);
                 //Calculate price
                 ShoppingCartVM.OrderOverview.OrderTotal += (list.Price * list.Count);
 
@@ -186,6 +185,95 @@ namespace NeighborhoodMarket.Areas.Customer.Controllers
             ShoppingCartVM.OrderOverview.PostalCode = ShoppingCartVM.OrderOverview.ApplicationUser.PostalCode;
 
             return View(ShoppingCartVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost(string stripeToken)
+        {
+            //Get the logged in user
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ShoppingCartVM.OrderOverview.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(c => c.Id == claim.Value);
+            ShoppingCartVM.CartList = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value, includeProperties:"Product");
+
+            ShoppingCartVM.OrderOverview.PaymentStatus = StaticDetails.PaymentStatusPending;
+            ShoppingCartVM.OrderOverview.OrderStatus = StaticDetails.StatusPending;
+            ShoppingCartVM.OrderOverview.ApplicationUserId = claim.Value;
+            ShoppingCartVM.OrderOverview.OrderDate = DateTime.Now;
+
+            _unitOfWork.OrderOverView.Add(ShoppingCartVM.OrderOverview);
+            _unitOfWork.Save();
+
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            foreach(var item in ShoppingCartVM.CartList)
+            {
+                item.Price = StaticDetails.GetPrice(item.Count, item.Product.Price);
+                OrderDetails orderDetails = new OrderDetails()
+                {
+                    ProductId = item.ProductId,
+                    OrderId = ShoppingCartVM.OrderOverview.Id,
+                    Price = item.Price,
+                    Count = item.Count
+                };
+
+                //Add all the Items in the OrderOverview to the database
+                ShoppingCartVM.OrderOverview.OrderTotal += orderDetails.Count * orderDetails.Price;
+                _unitOfWork.OrderDetails.Add(orderDetails);
+                
+            }
+
+            //Remove items from the ShoppingCart
+            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.CartList);
+            _unitOfWork.Save();
+            HttpContext.Session.SetInt32(StaticDetails.ssShoppingCart, 0);
+
+            if(stripeToken == null)
+            {
+
+            }
+            else
+            {
+                //Process the payment
+                var options = new ChargeCreateOptions
+                {
+                    Amount = Convert.ToInt32(ShoppingCartVM.OrderOverview.OrderTotal * 100),
+                    Currency = "usd",
+                    Description = "Order ID : " + ShoppingCartVM.OrderOverview.Id,
+                    Source = stripeToken
+                };
+
+                var service = new ChargeService();
+                //Makes the call to process the transaction on the card
+                Charge charge = service.Create(options);
+
+                if(charge.BalanceTransactionId == null)
+                {
+                    //A problem was faced during the transaction, hence reject it
+                    ShoppingCartVM.OrderOverview.PaymentStatus = StaticDetails.PaymentStatusRejected;
+                }
+                else
+                {
+                    ShoppingCartVM.OrderOverview.TransactionId = charge.BalanceTransactionId;
+                }
+                if(charge.Status.ToLower() == "succeeded")
+                {
+                    ShoppingCartVM.OrderOverview.PaymentStatus = StaticDetails.PaymentStatusApproved;
+                    ShoppingCartVM.OrderOverview.OrderStatus = StaticDetails.StatusApproved;
+                    ShoppingCartVM.OrderOverview.PaymentDate = DateTime.Now;
+                }
+            }
+
+            _unitOfWork.Save();
+            return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderOverview.Id });
+                                                                                                           
+
+        }
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            return View(id);
         }
     }
 }
