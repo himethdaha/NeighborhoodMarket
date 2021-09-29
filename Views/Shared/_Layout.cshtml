@@ -33,7 +33,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
+                            @if(User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
+                                {
+                                    <span>Manage Orders</span>
+                                }
+                                else
+                                {
+                                    <span>Order History</span>
+                                }
+                        </li>
+                            @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -74,11 +85,11 @@
                         }
                         else
                         {
-                                <li>
-                                    <a href="" title="Buy Something :)" class="nav-link text-white" style="color:white">
-                                        <i class="fas fa-cart-plus"></i> (0);
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="" title="Buy Something :)" class="nav-link text-white" style="color:white">
+                                    <i class="fas fa-cart-plus"></i> (0);
+                                </a>
+                            </li>
                         }
                     </ul>
 

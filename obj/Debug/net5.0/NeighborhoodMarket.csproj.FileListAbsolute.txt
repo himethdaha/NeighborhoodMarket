@@ -517,3 +517,4 @@ C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Custom
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\Cart\Summary.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Customer\Views\Cart\OrderConfirmation.cshtml.g.cs
 C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Order\Index.cshtml.g.cs
+C:\Users\LEO\Documents\c#\NeighborhoodMarket\obj\Debug\net5.0\Razor\Areas\Admin\Views\Order\Details.cshtml.g.cs
