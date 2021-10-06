@@ -34,15 +34,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
-                            @if(User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
-                                {
-                                    <span>Manage Orders</span>
-                                }
-                                else
-                                {
-                                    <span>Order History</span>
-                                }
+                            @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
+                            {
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index"><span>Manage Orders</span></a>
+                            }
+                            else
+                            {
+                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index"> <span>Order History</span></a>
+                               
+                            }
                         </li>
                             @if (User.IsInRole(StaticDetails.Role_User_Admin) || User.IsInRole(StaticDetails.Role_User_Emp))
                         {
@@ -79,7 +79,7 @@
                                     @{
                                         var count = HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.ssShoppingCart);
                                     }
-                                    <i class="fas fa-cart-plus"></i> &nbsp; (@count);
+                                    <i class="fas fa-cart-plus"></i> &nbsp; (@count)
                                 </a>
                             </li>
                         }
@@ -100,6 +100,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notifications" />
             @RenderBody()
         </main>
     </div>

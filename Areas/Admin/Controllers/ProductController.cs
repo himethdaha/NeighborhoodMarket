@@ -34,12 +34,13 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
+            IEnumerable<Category> CatList = await _unitOfWork.Category.GetAllAsync();
             ProductVm productVm = new ProductVm()
             {
                 Product = new Product(),
-                CategoryList = _unitOfWork.Category.GetAll().Select(i=>new SelectListItem
+                CategoryList = CatList.Select(i=>new SelectListItem
                 {
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
@@ -66,8 +67,9 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVm productVM)
+        public async Task<IActionResult> Upsert(ProductVm productVM)
         {
+            IEnumerable<Category> CatList = await _unitOfWork.Category.GetAllAsync();
             if (ModelState.IsValid)
             {
                 string webRootPath = _hostEnvironment.WebRootPath;
@@ -118,7 +120,7 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
             }
             else
             {
-                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                productVM.CategoryList = CatList.Select(i => new SelectListItem
                 {
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
@@ -155,11 +157,14 @@ namespace NeighborhoodMarket.Areas.Admin.Controllers
                 }
                 _unitOfWork.Product.Remove(objFromDb);
                 _unitOfWork.Save();
+
+                TempData["Success"] = "Category Successfully Deleted";
                 return Json(new { success = true, message = "Delete Successfull" });
 
             }
             else
             {
+                TempData["Error"] = "Error Deleting Category";
                 return Json(new { success = false, message = "Error Occured While Deleting" });
 
             }
